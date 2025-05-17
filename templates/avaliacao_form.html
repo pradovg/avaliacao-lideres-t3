@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação Semanal de Líderes - T3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        #percentual_atendimento_group {
+            display: none; /* Oculto por padrão */
+            background-color: #FFF8F5; /* Cor Shopee light */
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            border: 1px solid #EE4D2D; /* Cor Shopee */
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <h1 class="shopee-text">Shopee</h1>
+    </header>
+    <div class="container">
+        <div class="navigation-links">
+            <a href="{{ url_for('index') }}">Nova Avaliação</a>
+            <a href="{{ url_for('view_evaluations') }}">Ver Avaliações</a>
+            <a href="{{ url_for('delete_evaluation') }}">Excluir Avaliações</a>
+            <a href="{{ url_for('manage_lideres') }}">Gerenciar Líderes</a>
+            <a href="{{ url_for('leader_dashboard_select') }}">Dashboard por Líder</a>
+        </div>
+
+        <h1>Avaliação Semanal de Líderes - Turno T3</h1>
+        <p>Este formulário tem como objetivo coletar dados para a avaliação de desempenho semanal dos líderes do turno T3.</p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('submit_evaluation') }}" method="post">
+            <h2>Informações Gerais da Avaliação</h2>
+            
+            <div class="form-group">
+                <label for="data_avaliacao">Data da Avaliação:</label>
+                <input type="date" id="data_avaliacao" name="data_avaliacao" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="nome_lider">Nome do Líder Avaliado:</label>
+                <select id="nome_lider" name="nome_lider" required>
+                    <option value="" disabled selected>Selecione o Líder</option>
+                    {% for lider in lideres %}
+                        <option value="{{ lider }}">{{ lider }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="area_atuacao">Área de Atuação do Líder:</label>
+                <select id="area_atuacao" name="area_atuacao" required onchange="togglePercentualAtendimento()">
+                    <option value="" disabled selected>Selecione a Área</option>
+                    <option value="Recebimento">Recebimento</option>
+                    <option value="Esteiras">Esteiras</option>
+                    <option value="Buffer">Buffer</option>
+                    <option value="Expedicao">Expedição</option>
+                </select>
+            </div>
+
+            <!-- Campo Condicional para Percentual de Atendimento -->
+            <div class="form-group" id="percentual_atendimento_group">
+                <label for="percentual_atendimento_esteira">Percentual de Atendimento da Semana (%):</label>
+                <input type="number" id="percentual_atendimento_esteira" name="percentual_atendimento_esteira" min="0" max="100" step="0.01" placeholder="Ex: 95.5">
+            </div>
+            
+            <div class="form-group">
+                <label for="semana_referencia">Semana de Referência:</label>
+                <input type="text" id="semana_referencia" name="semana_referencia" placeholder="Ex: Semana 1 (01-07/Maio)" required>
+            </div>
+            
+            <h2>Critérios de Avaliação (0 a 10)</h2>
+            <p class="escala-info">0 = Péssimo, 10 = Ótimo</p>
+
+            <div class="criterio-group">
+                <label for="produtividade_time">1. Produtividade do Time:</label>
+                <div class="range-container">
+                    <span>0</span><input type="range" id="produtividade_time" name="produtividade_time" min="0" max="10" value="5" step="1" oninput="this.nextElementSibling.nextElementSibling.innerHTML = this.value"><span>10</span>
+                    <o>5</o>
+                </div>
+            </div>
+            
+            <div class="criterio-group">
+                <label for="qualidade_entregas">2. Qualidade das Entregas:</label>
+                 <div class="range-container">
+                    <span>0</span><input type="range" id="qualidade_entregas" name="qualidade_entregas" min="0" max="10" value="5" step="1" oninput="this.nextElementSibling.nextElementSibling.innerHTML = this.value"><span>10</span>
+                    <o>5</o>
+                </div>
+            </div>
+
+            <div class="criterio-group">
+                <label for="gestao_absenteismo">3. Gestão de Absenteísmo:</label>
+                <div class="range-container">
+                    <span>0</span><input type="range" id="gestao_absenteismo" name="gestao_absenteismo" min="0" max="10" value="5" step="1" oninput="this.nextElementSibling.nextElementSibling.innerHTML = this.value"><span>10</span>
+                    <o>5</o>
+                </div>
+            </div>
+
+            <div class="criterio-group">
+                <label for="turnover_equipe">4. Turnover da Equipe:</label>
+                <div class="range-container">
+                    <span>0</span><input type="range" id="turnover_equipe" name="turnover_equipe" min="0" max="10" value="5" step="1" oninput="this.nextElementSibling.nextElementSibling.innerHTML = this.value"><span>10</span>
+                    <o>5</o>
+                </div>
+            </div>
+
+            <div class="criterio-group">
+                <label for="clima_engajamento">5. Clima e Engajamento:</label>
+                <div class="range-container">
+                    <span>0</span><input type="range" id="clima_engajamento" name="clima_engajamento" min="0" max="10" value="5" step="1" oninput="this.nextElementSibling.nextElementSibling.innerHTML = this.value"><span>10</span>
+                    <o>5</o>
+                </div>
+            </div>
+
+            <div class="criterio-group">
+                <label for="comunicacao_eficaz">6. Comunicação Eficaz:</label>
+                <div class="range-container">
+                    <span>0</span><input type="range" id="comunicacao_eficaz" name="comunicacao_eficaz" min="0" max="10" value="5" step="1" oninput="this.nextElementSibling.nextElementSibling.innerHTML = this.value"><span>10</span>
+                    <o>5</o>
+                </div>
+            </div>
+
+            <div class="criterio-group">
+                <label for="lideranca_influencia">7. Liderança e Influência:</label>
+                <div class="range-container">
+                    <span>0</span><input type="range" id="lideranca_influencia" name="lideranca_influencia" min="0" max="10" value="5" step="1" oninput="this.nextElementSibling.nextElementSibling.innerHTML = this.value"><span>10</span>
+                    <o>5</o>
+                </div>
+            </div>
+
+            <div class="criterio-group">
+                <label for="resolucao_problemas">8. Resolução de Problemas:</label>
+                <div class="range-container">
+                    <span>0</span><input type="range" id="resolucao_problemas" name="resolucao_problemas" min="0" max="10" value="5" step="1" oninput="this.nextElementSibling.nextElementSibling.innerHTML = this.value"><span>10</span>
+                    <o>5</o>
+                </div>
+            </div>
+
+            <div class="criterio-group">
+                <label for="gestao_conflitos">9. Gestão de Conflitos:</label>
+                <div class="range-container">
+                    <span>0</span><input type="range" id="gestao_conflitos" name="gestao_conflitos" min="0" max="10" value="5" step="1" oninput="this.nextElementSibling.nextElementSibling.innerHTML = this.value"><span>10</span>
+                    <o>5</o>
+                </div>
+            </div>
+
+            <div class="criterio-group">
+                <label for="delegacao_desenvolvimento">10. Delegação e Desenvolvimento:</label>
+                <div class="range-container">
+                    <span>0</span><input type="range" id="delegacao_desenvolvimento" name="delegacao_desenvolvimento" min="0" max="10" value="5" step="1" oninput="this.nextElementSibling.nextElementSibling.innerHTML = this.value"><span>10</span>
+                    <o>5</o>
+                </div>
+            </div>
+            
+            <h2>Observações Adicionais</h2>
+            <div class="form-group">
+                <label for="observacoes_adicionais">Observações Adicionais (opcional):</label>
+                <textarea id="observacoes_adicionais" name="observacoes_adicionais" rows="5"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit">Enviar Avaliação</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function togglePercentualAtendimento() {
+            var areaAtuacao = document.getElementById("area_atuacao").value;
+            var percentualGroup = document.getElementById("percentual_atendimento_group");
+            var percentualInput = document.getElementById("percentual_atendimento_esteira");
+
+            if (areaAtuacao === "Esteiras") {
+                percentualGroup.style.display = "block";
+                percentualInput.required = true;
+            } else {
+                percentualGroup.style.display = "none";
+                percentualInput.required = false;
+                percentualInput.value = ""; // Limpa o valor se não for Esteiras
+            }
+        }
+        // Chama a função no carregamento da página para o caso de um valor já estar selecionado (ex: ao voltar no navegador)
+        document.addEventListener("DOMContentLoaded", togglePercentualAtendimento);
+    </script>
+</body>
+</html>

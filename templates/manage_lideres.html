@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Líderes - T3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="app-header">
+        <h1 class="shopee-text">Shopee</h1>
+    </header>
+    <div class="container">
+        <div class="navigation-links">
+            <a href="{{ url_for('index') }}">Nova Avaliação</a>
+            <a href="{{ url_for('view_evaluations') }}">Ver Avaliações</a>
+            <a href="{{ url_for('delete_evaluation') }}">Excluir Avaliações</a>
+            <a href="{{ url_for('manage_lideres') }}">Gerenciar Líderes</a>
+            <a href="{{ url_for('leader_dashboard_select') }}">Dashboard por Líder</a>
+        </div>
+
+        <h1>Gerenciar Líderes</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div class="lider-management-forms">
+            <form action="{{ url_for('add_lider') }}" method="post">
+                <h2>Adicionar Novo Líder</h2>
+                <div class="form-group">
+                    <label for="nome_lider_adicionar">Nome do Líder:</label>
+                    <input type="text" id="nome_lider_adicionar" name="nome_lider_adicionar" required>
+                </div>
+                <button type="submit">Adicionar Líder</button>
+            </form>
+
+            <form action="{{ url_for('remove_lider') }}" method="post">
+                <h2>Remover Líder Existente</h2>
+                <div class="form-group">
+                    <label for="nome_lider_remover">Selecione o Líder:</label>
+                    <select id="nome_lider_remover" name="nome_lider_remover" required>
+                        <option value="" disabled selected>-- Escolha um líder para remover --</option>
+                        {% for lider in lideres %}
+                            <option value="{{ lider }}">{{ lider }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="remove-btn">Remover Líder</button>
+            </form>
+        </div>
+
+        <div class="lideres-list">
+            <h3>Líderes Atuais no Sistema:</h3>
+            {% if lideres and lideres|length > 0 %}
+                <ul>
+                    {% for lider in lideres %}
+                        <li>{{ lider }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-data">Nenhum líder cadastrado.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

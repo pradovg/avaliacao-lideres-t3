@@ -1,0 +1,466 @@
+/* Shopee Orange: #EE4D2D */
+/* Shopee Light Orange (for backgrounds/accents): #FFF1E0 or #FFEFEB */
+/* Shopee Dark Orange/Red (for hover/active states): #D03F20 */
+/* Neutral Grays: #f4f4f9 (body bg), #fff (container bg), #333 (text), #555, #6c757d, #ddd, #eee */
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #FFF1E0; /* Shopee light orange background */
+    color: #333333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0; /* Remove body padding, header will span full width */
+}
+
+.app-header {
+    text-align: center;
+    padding: 15px 0; /* Adjusted padding */
+    background-color: #EE4D2D; /* Shopee Orange */
+    border-bottom: 3px solid #D03F20; /* Darker orange border */
+    margin-bottom: 0; /* No margin-bottom */
+}
+
+.app-header .shopee-text {
+    color: white;
+    font-size: 3.5em;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: none;
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.container {
+    max-width: 90%; /* Adjusted for better use of space */
+    margin: 20px auto; /* Add margin to separate from header and footer */
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    color: #D03F20; /* Shopee Dark Orange/Red for headers */
+    text-align: center;
+}
+
+h1 {
+    margin-top: 0; /* Remove top margin if container handles it */
+    margin-bottom: 15px;
+    font-size: 2.0em; /* Slightly adjusted */
+}
+
+h2 {
+    margin-top: 30px; /* Adjusted */
+    margin-bottom: 20px;
+    border-bottom: 2px solid #EE4D2D; /* Shopee Orange border */
+    padding-bottom: 8px;
+    font-size: 1.7em; /* Slightly adjusted */
+}
+
+.escala-info {
+    text-align: center;
+    font-style: italic;
+    color: #555555;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #EE4D2D; /* Shopee Orange for labels */
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box; 
+    transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="date"]:focus,
+.form-group input[type="number"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #EE4D2D; /* Shopee Orange on focus */
+    box-shadow: 0 0 0 0.2rem rgba(238, 77, 45, 0.25);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.criterio-group {
+    margin-bottom: 25px;
+    padding: 20px;
+    border: 1px solid #FFEFEB; /* Lighter orange border */
+    border-radius: 8px;
+    background-color: #FFF8F5; /* Very light orange background */
+}
+
+.criterio-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #D03F20;
+}
+
+.range-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.range-container input[type="range"] {
+    flex-grow: 1;
+    cursor: pointer;
+    accent-color: #EE4D2D; /* Shopee Orange for range slider */
+}
+
+.range-container span {
+    font-size: 0.95em;
+    color: #555555;
+}
+
+.range-container output {
+    font-weight: bold;
+    min-width: 25px; 
+    text-align: center;
+    color: #EE4D2D;
+}
+
+button[type="submit"],
+.lider-management-forms button,
+.leader-select-form button {
+    display: inline-block; /* Changed from block for form buttons */
+    width: auto; /* Auto width for form buttons */
+    min-width: 150px; /* Minimum width for better appearance */
+    padding: 10px 15px; /* Adjusted padding */
+    background-color: #EE4D2D; /* Shopee Orange */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.0em; /* Adjusted font size */
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+/* Full width for main submit button */
+form > .form-group > button[type="submit"] {
+    width: 100%;
+    font-size: 1.1em;
+    padding: 12px 15px;
+}
+
+button[type="submit"]:hover,
+.lider-management-forms button:hover,
+.leader-select-form button:hover {
+    background-color: #D03F20; /* Shopee Dark Orange/Red on hover */
+}
+
+.lider-management-forms button.remove-btn {
+    background-color: #c82333; 
+}
+.lider-management-forms button.remove-btn:hover {
+    background-color: #a31c29;
+}
+
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    margin-bottom: 25px; 
+    font-size: 0.9em; /* Adjusted for more data */
+}
+
+th, td {
+    border: 1px solid #FFEFEB; 
+    padding: 10px; /* Adjusted padding */
+    text-align: left;
+    vertical-align: middle; 
+}
+
+th {
+    background-color: #EE4D2D; 
+    color: #ffffff; 
+    font-weight: bold; 
+    text-transform: capitalize; 
+}
+
+tr:nth-child(even) {
+    background-color: #FFF8F5; 
+}
+
+tr:hover {
+    background-color: #FFEFEB; 
+}
+
+.no-data {
+    text-align: center;
+    padding: 25px;
+    font-style: italic;
+    color: #6c757d; 
+}
+
+.table-responsive-container {
+    overflow-x: auto; 
+    margin-bottom: 20px;
+    border: 1px solid #FFEFEB;
+    border-radius: 5px;
+}
+
+
+/* Navigation Links */
+.navigation-links {
+    margin-bottom: 25px; 
+    padding: 15px 0; /* Added top/bottom padding */
+    border-bottom: 2px solid #EE4D2D; 
+    text-align: center;
+}
+.navigation-links a {
+    margin: 0 12px; 
+    color: #D03F20; 
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em; 
+    transition: color 0.3s ease;
+}
+.navigation-links a:hover {
+    text-decoration: underline;
+    color: #EE4D2D; 
+}
+
+/* Flash Messages */
+.flash-messages {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0; /* Adjusted margin */
+}
+.flash-messages li {
+    padding: 12px 15px; 
+    margin-bottom: 12px;
+    border-radius: 5px; 
+    text-align: center;
+    font-size: 1.0em; /* Adjusted font size */
+    border-width: 1px;
+    border-style: solid;
+}
+.flash-messages .success {
+    background-color: #d1e7dd; 
+    color: #0f5132;
+    border-color: #badbcc;
+}
+.flash-messages .error {
+    background-color: #f8d7da; 
+    color: #842029;
+    border-color: #f5c2c7;
+}
+.flash-messages .warning {
+    background-color: #fff3cd; 
+    color: #664d03;
+    border-color: #ffecb5;
+}
+
+/* Leader Management Specific */
+.lider-management-forms {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.lider-management-forms form {
+    border: 1px solid #FFEFEB;
+    padding: 20px;
+    border-radius: 8px;
+    width: 48%;
+    background-color: #FFF8F5;
+}
+
+.lideres-list {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #FFEFEB;
+    border-radius: 8px;
+    background-color: #FFF8F5;
+}
+.lideres-list h3 {
+    text-align: center;
+    color: #D03F20;
+}
+.lideres-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+.lideres-list li {
+    padding: 10px;
+    border-bottom: 1px solid #FFEFEB;
+}
+.lideres-list li:last-child {
+    border-bottom: none;
+}
+
+/* Chart Container */
+.chart-container {
+    width: 95%; 
+    max-width: 650px; /* Adjusted max-width */
+    margin: 30px auto;
+    padding: 15px;
+    border: 1px solid #FFEFEB;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+/* Conditional Esteiras Field */
+#percentual_atendimento_group { /* Corrected ID to match HTML */
+    display: none; 
+    background-color: #FFF8F5; 
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 5px;
+    border: 1px solid #EE4D2D;
+}
+
+/* Success Message Box */
+.success-message-box {
+    padding: 20px;
+    border: 1px solid #d1e7dd;
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+/* Button Link Style */
+.btn-link {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #EE4D2D;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+.btn-link:hover {
+    background-color: #D03F20;
+    text-decoration: none;
+}
+
+/* Secondary Button Link Style */
+.btn-link-secondary {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+.btn-link-secondary:hover {
+    background-color: #5a6268;
+    text-decoration: none;
+}
+
+/* Date Filter Styles */
+.date-filter {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.date-filter .form-group {
+    flex: 1;
+}
+
+.form-row {
+    margin-bottom: 20px;
+}
+
+.periodo-info {
+    text-align: center;
+    font-style: italic;
+    color: #555555;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #FFF8F5;
+    border: 1px solid #FFEFEB;
+    border-radius: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) { 
+    .container {
+        padding: 15px;
+        max-width: 100%; 
+        margin: 10px auto;
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+    h2 {
+        font-size: 1.5em;
+    }
+    .navigation-links a {
+        font-size: 1.0em;
+        margin: 0 8px;
+    }
+    .lider-management-forms {
+        flex-direction: column;
+    }
+    .lider-management-forms form {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    .range-container {
+        flex-direction: column; /* Stack range slider elements on small screens */
+        align-items: flex-start;
+    }
+    .range-container input[type="range"] {
+        width: 100%; /* Make range slider full width */
+    }
+    .date-filter {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .navigation-links a {
+        display: block; /* Stack nav links on very small screens */
+        margin-bottom: 8px;
+    }
+    button[type="submit"],
+    .lider-management-forms button,
+    .leader-select-form button {
+        font-size: 0.95em;
+        padding: 10px 12px;
+    }
+    h1 {
+        font-size: 1.6em;
+    }
+    h2 {
+        font-size: 1.3em;
+    }
+}

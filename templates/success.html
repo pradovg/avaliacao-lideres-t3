@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação Enviada</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="app-header">
+        <h1 class="shopee-text">Shopee</h1>
+    </header>
+    <div class="container">
+        <div class="navigation-links">
+            <a href="{{ url_for('index') }}">Nova Avaliação</a>
+            <a href="{{ url_for('view_evaluations') }}">Ver Avaliações</a>
+            <a href="{{ url_for('delete_evaluation') }}">Excluir Avaliações</a>
+            <a href="{{ url_for('manage_lideres') }}">Gerenciar Líderes</a>
+            <a href="{{ url_for('leader_dashboard_select') }}">Dashboard por Líder</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <!-- Default success message if no flash message is present --> 
+                <div class="success-message-box">
+                    <h1>Avaliação Enviada com Sucesso!</h1>
+                    <p>Sua avaliação foi registrada.</p>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Link to submit another evaluation, can be part of the success message or separate -->
+        <p style="margin-top: 20px; text-align: center;">
+            <a href="{{ url_for('index') }}" class="btn-link">Enviar outra avaliação</a>
+        </p>
+    </div>
+</body>
+</html>

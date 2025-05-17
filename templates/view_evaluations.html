@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Avaliações - T3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="app-header">
+        <h1 class="shopee-text">Shopee</h1>
+    </header>
+    <div class="container">
+        <div class="navigation-links">
+            <a href="{{ url_for('index') }}">Nova Avaliação</a>
+            <a href="{{ url_for('view_evaluations') }}">Ver Avaliações</a>
+            <a href="{{ url_for('delete_evaluation') }}">Excluir Avaliações</a>
+            <a href="{{ url_for('manage_lideres') }}">Gerenciar Líderes</a>
+            <a href="{{ url_for('leader_dashboard_select') }}">Dashboard por Líder</a>
+        </div>
+
+        <h1>Avaliações Registradas</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {% if evaluations and evaluations|length > 0 %}
+            <div class="table-responsive-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data Avaliação</th>
+                            <th>Nome Líder</th>
+                            <th>Área Atuação</th>
+                            <th>Semana Referência</th>
+                            <th>Prod. Time</th>
+                            <th>Qual. Entregas</th>
+                            <th>Gest. Absenteísmo</th>
+                            <th>Turnover Equipe</th>
+                            <th>Clima Engaj.</th>
+                            <th>Comun. Eficaz</th>
+                            <th>Lid. Influência</th>
+                            <th>Res. Problemas</th>
+                            <th>Gest. Conflitos</th>
+                            <th>Deleg. Desenv.</th>
+                            <th>Perc. Atend. (Esteiras)</th>
+                            <th>Observações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in evaluations %}
+                            <tr>
+                                <td>{{ row.data_avaliacao }}</td>
+                                <td>{{ row.nome_lider }}</td>
+                                <td>{{ row.area_atuacao }}</td>
+                                <td>{{ row.semana_referencia }}</td>
+                                <td>{{ row.produtividade_time }}</td>
+                                <td>{{ row.qualidade_entregas }}</td>
+                                <td>{{ row.gestao_absenteismo }}</td>
+                                <td>{{ row.turnover_equipe }}</td>
+                                <td>{{ row.clima_engajamento }}</td>
+                                <td>{{ row.comunicacao_eficaz }}</td>
+                                <td>{{ row.lideranca_influencia }}</td>
+                                <td>{{ row.resolucao_problemas }}</td>
+                                <td>{{ row.gestao_conflitos }}</td>
+                                <td>{{ row.delegacao_desenvolvimento }}</td>
+                                <td>
+                                    {% if row.area_atuacao == "Esteiras" and row.percentual_atendimento_esteira %}
+                                        {{ row.percentual_atendimento_esteira }}%
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>{{ row.observacoes_adicionais }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="no-data">Nenhuma avaliação encontrada.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
