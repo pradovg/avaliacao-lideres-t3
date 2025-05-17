@@ -6,6 +6,8 @@ from collections import defaultdict
 import json # For passing data to Chart.js
 import tempfile
 import pathlib
+import json
+from google.oauth2 import service_account
 
 # Configuração para evitar erro de diretório home no ambiente de produção
 os.environ['HOME'] = tempfile.gettempdir()
@@ -37,7 +39,6 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 EVALUATIONS_CSV_FILE_PATH = os.path.join(DATA_DIR, 'avaliacoes_lideres.csv')
 LIDERES_CSV_FILE_PATH = os.path.join(DATA_DIR, 'lideres.csv')
-GOOGLE_CREDS_PATH = os.path.join(BASE_DIR, 'google_creds.json')
 GOOGLE_SHEET_ID = '1gmIdczCSqAwJasvOOoY1rsz1bW0L0dfcFA_8020eF18'
 GOOGLE_SHEET_WORKSHEET_NAME = 'RespostasAvaliacao'
 
@@ -58,7 +59,8 @@ LIDERES_CSV_HEADER = ['nome']
 def get_gsheet_client():
     try:
         scopes = ['https://www.googleapis.com/auth/spreadsheets']
-        creds = Credentials.from_service_account_file(GOOGLE_CREDS_PATH, scopes=scopes)
+        creds_info = json.loads(os.environ.get("GOOGLE_CREDS_JSON", "{}"))
+        creds = service_account.Credentials.from_service_account_info(creds_info, scopes=scopes)
         client = gspread.authorize(creds)
         return client
     except Exception as e:
