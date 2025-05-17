@@ -3,7 +3,6 @@ import sys
 import csv
 import datetime
 from collections import defaultdict
-import json # For passing data to Chart.js
 import tempfile
 import pathlib
 import json
