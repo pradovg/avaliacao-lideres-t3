@@ -142,7 +142,7 @@ def get_lideres_from_gsheet():
         except gspread.exceptions.WorksheetNotFound:
             # Se a planilha não existir, criar uma nova
             sheet = client.open_by_key(GOOGLE_SHEET_ID).add_worksheet(title='Lideres', rows=100, cols=1)
-            sheet.update('A1', ['nome'])
+            sheet.update('A1', [['nome']])
             default_lideres = ['ADRIANA', 'EDUARDO', 'VANDERLEYA', 'LILIANE', 'BRUNA', 'FLAVIO', 'RODRIGO', 'RUDNEY', 'WELLINGTON']
             for i, lider in enumerate(default_lideres):
                 sheet.update(f'A{i+2}', [[lider]])
