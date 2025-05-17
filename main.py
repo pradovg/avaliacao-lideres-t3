@@ -165,26 +165,27 @@ def update_lideres_in_gsheet(lideres):
     client = get_gsheet_client()
     if not client:
         return False
-    
+
     try:
         try:
             sheet = client.open_by_key(GOOGLE_SHEET_ID).worksheet('Lideres')
         except gspread.exceptions.WorksheetNotFound:
             sheet = client.open_by_key(GOOGLE_SHEET_ID).add_worksheet(title='Lideres', rows=100, cols=1)
-        
+
         # Limpar a planilha e reescrever todos os dados
         sheet.clear()
-        sheet.update('A1', ['nome'])
-        
+        sheet.update('A1', [['nome']])  # CORRIGIDO AQUI ✅
+
         # Adicionar cada líder em uma linha
         for i, lider in enumerate(sorted(list(set(lideres)))):
             sheet.update(f'A{i+2}', [[lider]])
-        
+
         print("Lista de líderes atualizada no Google Sheets.")
         return True
     except Exception as e:
         print(f"Erro ao atualizar líderes no Google Sheets: {e}")
         return False
+
 
 # --- Leader Management Helper Functions ---
 def get_lideres():
