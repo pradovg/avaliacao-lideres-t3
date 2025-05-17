@@ -418,3 +418,4 @@ def leader_dashboard_select():
             row for row in all_evaluations 
             if row.get('nome_lider') == selected_lide
 (Content truncated due to size limit. Use line ranges to read in chunks)
+        ]
