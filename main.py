@@ -230,7 +230,8 @@ from flask import session, request
 # Credenciais de usuário (em produção, isso deveria estar em um banco de dados)
 USERS = {
     'admin': 'shopee2025',
-    'supervisor': 'shopeet3'
+    'supervisor': 'shopeet3',
+    'manual': '12345678'
 }
 
 def login_required(f):
