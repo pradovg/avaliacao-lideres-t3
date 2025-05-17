@@ -412,10 +412,34 @@ def leader_dashboard_select():
     if selected_lider_nome:
         # Obter avaliações diretamente do Google Sheets
         all_evaluations = get_evaluations_from_gsheet()
-        
+
         # Filtrar avaliações pelo líder selecionado
         evaluations_lider = [
             row for row in all_evaluations 
-            if row.get('nome_lider') == selected_lide
-(Content truncated due to size limit. Use line ranges to read in chunks)
+            if row.get('nome_lider') == selected_lider_nome
         ]
+
+        # Calcular médias por critério para o gráfico radar
+        if evaluations_lider:
+            criterio_somas = {criterio: 0 for criterio in CRITERIA_FIELDS}
+            for row in evaluations_lider:
+                for criterio in CRITERIA_FIELDS:
+                    try:
+                        criterio_somas[criterio] += int(row.get(criterio, 0))
+                    except ValueError:
+                        pass
+            radar_chart_data_lider['labels'] = CRITERIA_FIELDS
+            radar_chart_data_lider['data'] = [
+                round(criterio_somas[criterio] / len(evaluations_lider), 2) for criterio in CRITERIA_FIELDS
+            ]
+
+    return render_template(
+        'leader_dashboard.html',
+        todos_lideres=todos_lideres,
+        selected_lider_nome=selected_lider_nome,
+        evaluations_lider=evaluations_lider,
+        radar_chart_data_lider=radar_chart_data_lider,
+        data_inicio=data_inicio,
+        data_fim=data_fim,
+        periodo_filtro=periodo_filtro
+    )
