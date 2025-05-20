@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -8,54 +9,43 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fdfdfd;
+      background-color: #fff;
       margin: 0;
       padding: 0;
     }
     header {
       background-color: #FF5722;
-      color: white;
       padding: 20px;
       text-align: center;
+      color: white;
     }
     main {
       padding: 20px;
     }
     h2 {
       color: #FF5722;
-      margin-top: 40px;
     }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      font-weight: bold;
-    }
-    select, input[type="date"] {
-      padding: 5px;
-      margin-right: 10px;
-    }
-    button {
-      padding: 5px 15px;
-      background-color: #FF5722;
-      border: none;
-      color: white;
-      cursor: pointer;
+    form {
+      margin-bottom: 30px;
     }
     .charts {
       display: flex;
-      flex-wrap: wrap;
-      gap: 40px;
-      margin-top: 30px;
       justify-content: center;
     }
     canvas {
-      max-width: 500px;
+      max-width: 600px;
       max-height: 400px;
-      background-color: #fff;
+    }
+    nav {
+      background-color: #eee;
       padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #FF5722;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -63,44 +53,42 @@
   <header>
     <h1>Dashboard de Desempenho do Líder</h1>
   </header>
+
+  <nav>
+    <a href="/">Nova Avaliação</a>
+    <a href="/view_evaluations">Ver Todas Avaliações</a>
+    <a href="/delete_evaluation">Excluir Avaliações</a>
+    <a href="/manage_lideres">Gerenciar Líderes</a>
+    <a href="/leader_dashboard">Dashboard por Líder</a>
+  </nav>
+
   <main>
     <form method="GET" action="/leader_dashboard">
-      <div class="form-group">
-        <label for="lider_nome">Selecione o Líder:</label>
-        <select name="lider_nome" id="lider_nome">
-          {% for lider in todos_lideres %}
-            <option value="{{ lider }}" {% if lider == selected_lider_nome %}selected{% endif %}>{{ lider }}</option>
-          {% endfor %}
-        </select>
+      <label for="lider_nome">Selecione o Líder:</label>
+      <select name="lider_nome" id="lider_nome">
+        {% for lider in todos_lideres %}
+          <option value="{{ lider }}" {% if lider == selected_lider_nome %}selected{% endif %}>{{ lider }}</option>
+        {% endfor %}
+      </select>
 
-        <label for="data_inicio">Data Inicial:</label>
-        <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio }}">
+      <label for="data_inicio">Data Início:</label>
+      <input type="date" name="data_inicio" value="{{ data_inicio }}">
 
-        <label for="data_fim">Data Final:</label>
-        <input type="date" id="data_fim" name="data_fim" value="{{ data_fim }}">
+      <label for="data_fim">Data Final:</label>
+      <input type="date" name="data_fim" value="{{ data_fim }}">
 
-        <button type="submit">Aplicar Filtros</button>
-        <a href="/leader_dashboard" style="margin-left:10px;"><button type="button">Limpar Filtros</button></a>
-      </div>
+      <button type="submit">Aplicar Filtros</button>
+      <a href="/leader_dashboard"><button type="button">Limpar Filtros</button></a>
     </form>
 
     {% if selected_lider_nome %}
       <h2>Desempenho de: {{ selected_lider_nome }}</h2>
-      {% if periodo_filtro %}<p><strong>Período:</strong> {{ periodo_filtro }}</p>{% endif %}
+      {% if periodo_filtro %}
+        <p><strong>Período:</strong> {{ periodo_filtro }}</p>
+      {% endif %}
 
       <div class="charts">
         <canvas id="radarChart"></canvas>
-        {% set evolucao_data = [] %}
-        {% for row in evaluations_lider %}
-          {% if row.area_atuacao == "Esteiras" and row.percentual_atendimento_esteira %}
-            {% set _ = evolucao_data.append({"data": row.data_avaliacao, "valor": row.percentual_atendimento_esteira}) %}
-          {% endif %}
-        {% endfor %}
-        {% if evolucao_data|length > 0 %}
-          {% set datas = evolucao_data | map(attribute='data') | list %}
-          {% set valores = evolucao_data | map(attribute='valor') | list %}
-          <canvas id="lineChart"></canvas>
-        {% endif %}
       </div>
 
       <script>
@@ -109,54 +97,31 @@
           datasets: [{
             label: 'Média de {{ selected_lider_nome }}',
             data: {{ radar_chart_data_lider.data | tojson }},
-            backgroundColor: 'rgba(255, 87, 34, 0.4)',
+            backgroundColor: 'rgba(255, 87, 34, 0.2)',
             borderColor: 'rgba(255, 87, 34, 1)',
+            borderWidth: 2,
             pointBackgroundColor: 'rgba(255, 87, 34, 1)'
           }]
         };
 
-        new Chart(document.getElementById('radarChart'), {
+        const radarConfig = {
           type: 'radar',
           data: radarData,
           options: {
             responsive: true,
             plugins: {
-              legend: { position: 'top' },
-              title: { display: true, text: 'Médias por Critério (Todas Avaliações)' }
-            }
-          }
-        });
-
-        {% if datas and valores %}
-        const lineData = {
-          labels: {{ datas | tojson }},
-          datasets: [{
-            label: '% Atendimento - Esteiras',
-            data: {{ valores | tojson }},
-            borderColor: 'rgba(33, 150, 243, 1)',
-            backgroundColor: 'rgba(33, 150, 243, 0.2)',
-            tension: 0.3
-          }]
-        };
-
-        new Chart(document.getElementById('lineChart'), {
-          type: 'line',
-          data: lineData,
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { position: 'top' },
-              title: { display: true, text: 'Evolução do % Atendimento - Esteiras' }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                max: 100
+              title: {
+                display: true,
+                text: 'Médias por Critério (Todas Avaliações)'
               }
             }
           }
-        });
-        {% endif %}
+        };
+
+        new Chart(
+          document.getElementById('radarChart'),
+          radarConfig
+        );
       </script>
     {% else %}
       <p>Selecione um líder acima para visualizar o dashboard.</p>
