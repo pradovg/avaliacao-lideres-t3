@@ -1,175 +1,134 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard do Líder - T3</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard por Líder</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #FF5722;
+    }
+    .charts-container {
+      display: flex;
+      gap: 50px;
+      flex-wrap: wrap;
+    }
+    canvas {
+      background: #f4f4f4;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    form {
+      margin-bottom: 30px;
+    }
+    label {
+      margin-right: 10px;
+    }
+  </style>
 </head>
 <body>
-    <header class="app-header">
-        <h1 class="shopee-text">Shopee</h1>
-    </header>
-    <div class="container">
-        <div class="navigation-links">
-            <a href="{{ url_for('index') }}">Nova Avaliação</a>
-            <a href="{{ url_for('view_evaluations') }}">Ver Todas Avaliações</a>
-            <a href="{{ url_for('delete_evaluation') }}">Excluir Avaliações</a>
-            <a href="{{ url_for('manage_lideres') }}">Gerenciar Líderes</a>
-            <a href="{{ url_for('leader_dashboard_select') }}">Dashboard por Líder</a>
-        </div>
+  <h1>Dashboard por Líder</h1>
+  <form method="GET" action="/leader_dashboard">
+    <label for="lider_nome">Nome do Líder:</label>
+    <select name="lider_nome" id="lider_nome">
+      {% for lider in todos_lideres %}
+      <option value="{{ lider }}" {% if lider == selected_lider_nome %}selected{% endif %}>{{ lider }}</option>
+      {% endfor %}
+    </select>
 
-        <h1>Dashboard de Desempenho do Líder</h1>
+    <label for="data_inicio">Data Início:</label>
+    <input type="date" name="data_inicio" value="{{ data_inicio }}">
 
-        <form method="GET" action="{{ url_for('leader_dashboard_select') }}" class="leader-select-form">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="selected_lider">Selecione o Líder:</label>
-                    <select name="lider_nome" id="selected_lider" required>
-                        <option value="" disabled {% if not selected_lider_nome %}selected{% endif %}>-- Escolha um líder --</option>
-                        {% for lider_opt in todos_lideres %}
-                            <option value="{{ lider_opt }}" {% if lider_opt == selected_lider_nome %}selected{% endif %}>{{ lider_opt }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-row date-filter">
-                <div class="form-group">
-                    <label for="data_inicio">Data Inicial:</label>
-                    <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio }}">
-                </div>
-                <div class="form-group">
-                    <label for="data_fim">Data Final:</label>
-                    <input type="date" id="data_fim" name="data_fim" value="{{ data_fim }}">
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <button type="submit">Aplicar Filtros</button>
-                <a href="{{ url_for('leader_dashboard_select', lider_nome=selected_lider_nome) }}" class="btn-link-secondary">Limpar Filtros</a>
-            </div>
-        </form>
+    <label for="data_fim">Data Fim:</label>
+    <input type="date" name="data_fim" value="{{ data_fim }}">
 
-        {% if selected_lider_nome %}
-            <h2>Desempenho de: {{ selected_lider_nome }}</h2>
-            
-            {% if periodo_filtro %}
-                <div class="periodo-info">
-                    <p>Período analisado: {{ periodo_filtro }}</p>
-                </div>
-            {% endif %}
-            
-            {% if evaluations_lider and evaluations_lider|length > 0 %}
-                <h3>Médias por Critério {% if periodo_filtro %}({{ periodo_filtro }}){% else %}(Todas Avaliações){% endif %}</h3>
-                <div class="chart-container">
-                    <canvas id="radarChartLider"></canvas>
-                </div>
+    <button type="submit">Buscar</button>
+  </form>
 
-                <h3>Histórico de Avaliações {% if periodo_filtro %}({{ periodo_filtro }}){% endif %}</h3>
-                <div class="table-responsive-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data Avaliação</th>
-                                <th>Semana Referência</th>
-                                <th>Prod. Time</th>
-                                <th>Qual. Entregas</th>
-                                <th>Gest. Absenteísmo</th>
-                                <th>Turnover Equipe</th>
-                                <th>Clima Engaj.</th>
-                                <th>Comun. Eficaz</th>
-                                <th>Lid. Influência</th>
-                                <th>Res. Problemas</th>
-                                <th>Gest. Conflitos</th>
-                                <th>Deleg. Desenv.</th>
-                                <th>Perc. Atend. (Esteiras)</th>
-                                <th>Observações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for row in evaluations_lider %}
-                                <tr>
-                                    <td>{{ row.data_avaliacao }}</td>
-                                    <td>{{ row.semana_referencia }}</td>
-                                    <td>{{ row.produtividade_time }}</td>
-                                    <td>{{ row.qualidade_entregas }}</td>
-                                    <td>{{ row.gestao_absenteismo }}</td>
-                                    <td>{{ row.turnover_equipe }}</td>
-                                    <td>{{ row.clima_engajamento }}</td>
-                                    <td>{{ row.comunicacao_eficaz }}</td>
-                                    <td>{{ row.lideranca_influencia }}</td>
-                                    <td>{{ row.resolucao_problemas }}</td>
-                                    <td>{{ row.gestao_conflitos }}</td>
-                                    <td>{{ row.delegacao_desenvolvimento }}</td>
-                                    <td>
-                                        {% if row.area_atuacao == "Esteiras" and row.percentual_atendimento_esteira %}
-                                            {{ row.percentual_atendimento_esteira }}%
-                                        {% else %}
-                                            N/A
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ row.observacoes_adicionais }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+  {% if selected_lider_nome %}
+    <h2>Análise: {{ selected_lider_nome }}</h2>
+    {% if periodo_filtro %}<p>Período: {{ periodo_filtro }}</p>{% endif %}
 
-                <script>
-                    const ctxRadarLider = document.getElementById("radarChartLider");
-                    const radarDataLider = {{ radar_chart_data_lider | tojson }};
-                    new Chart(ctxRadarLider, {
-                        type: "radar",
-                        data: {
-                            labels: radarDataLider.labels,
-                            datasets: [{
-                                label: "Média de {{ selected_lider_nome }}",
-                                data: radarDataLider.data,
-                                fill: true,
-                                backgroundColor: "rgba(238, 77, 45, 0.2)", // Shopee Orange with transparency
-                                borderColor: "#EE4D2D", // Shopee Orange
-                                pointBackgroundColor: "#EE4D2D", // Shopee Orange
-                                pointBorderColor: "#fff",
-                                pointHoverBackgroundColor: "#fff",
-                                pointHoverBorderColor: "#D03F20" // Shopee Dark Orange
-                            }]
-                        },
-                        options: {
-                            elements: {
-                                line: {
-                                    borderWidth: 2 
-                                }
-                            },
-                            scales: {
-                                r: {
-                                    angleLines: { display: true },
-                                    suggestedMin: 0,
-                                    suggestedMax: 10,
-                                    ticks: { 
-                                        stepSize: 1,
-                                        backdropColor: "rgba(255, 255, 255, 0.75)" 
-                                    },
-                                    pointLabels: {
-                                        font: {
-                                            size: 10 
-                                        }
-                                    }
-                                }
-                            },
-                            responsive: true,
-                            maintainAspectRatio: false
-                        }
-                    });
-                </script>
-
-            {% else %}
-                <p class="no-data">Nenhuma avaliação encontrada para {{ selected_lider_nome }}{% if periodo_filtro %} no período selecionado{% endif %}.</p>
-            {% endif %}
-        {% else %}
-             <p class="no-data">Selecione um líder para visualizar o dashboard.</p>
+    <div class="charts-container">
+      <canvas id="radarChart" width="400" height="400"></canvas>
+      {% if radar_chart_data_lider.labels and radar_chart_data_lider.data and selected_lider_nome %}
+        {% set evolucao_data = [] %}
+        {% for row in evaluations_lider %}
+          {% if row.area_atuacao == "Esteiras" and row.percentual_atendimento_esteira %}
+            {% set _ = evolucao_data.append({"data": row.data_avaliacao, "valor": row.percentual_atendimento_esteira}) %}
+          {% endif %}
+        {% endfor %}
+        {% set datas = evolucao_data | map(attribute='data') | list %}
+        {% set valores = evolucao_data | map(attribute='valor') | list %}
+        {% if datas and valores %}
+          <canvas id="lineChart" width="400" height="400"></canvas>
         {% endif %}
+      {% endif %}
     </div>
+
+    <script>
+      const radarData = {
+        labels: {{ radar_chart_data_lider.labels | tojson }},
+        datasets: [{
+          label: 'Média dos Critérios',
+          data: {{ radar_chart_data_lider.data | tojson }},
+          backgroundColor: 'rgba(255, 87, 34, 0.4)',
+          borderColor: 'rgba(255, 87, 34, 1)',
+          pointBackgroundColor: 'rgba(255, 87, 34, 1)'
+        }]
+      };
+
+      new Chart(document.getElementById('radarChart'), {
+        type: 'radar',
+        data: radarData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            title: { display: true, text: 'Radar de Desempenho por Critério' }
+          }
+        }
+      });
+
+      {% if datas and valores %}
+      const lineData = {
+        labels: {{ datas | tojson }},
+        datasets: [{
+          label: '% Atendimento - Esteiras',
+          data: {{ valores | tojson }},
+          borderColor: 'rgba(33, 150, 243, 1)',
+          backgroundColor: 'rgba(33, 150, 243, 0.2)',
+          tension: 0.3
+        }]
+      };
+
+      new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: lineData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            title: { display: true, text: 'Evolução do % Atendimento - Esteiras' }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      });
+      {% endif %}
+    </script>
+  {% else %}
+    <p>Selecione um líder acima para visualizar o dashboard.</p>
+  {% endif %}
 </body>
 </html>
