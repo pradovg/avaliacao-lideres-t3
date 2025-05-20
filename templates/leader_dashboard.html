@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -34,7 +35,7 @@
                     </select>
                 </div>
             </div>
-            
+
             <div class="form-row date-filter">
                 <div class="form-group">
                     <label for="data_inicio">Data Inicial:</label>
@@ -45,7 +46,7 @@
                     <input type="date" id="data_fim" name="data_fim" value="{{ data_fim }}">
                 </div>
             </div>
-            
+
             <div class="form-row">
                 <button type="submit">Aplicar Filtros</button>
                 <a href="{{ url_for('leader_dashboard_select', lider_nome=selected_lider_nome) }}" class="btn-link-secondary">Limpar Filtros</a>
@@ -54,18 +55,33 @@
 
         {% if selected_lider_nome %}
             <h2>Desempenho de: {{ selected_lider_nome }}</h2>
-            
+
             {% if periodo_filtro %}
                 <div class="periodo-info">
                     <p>Período analisado: {{ periodo_filtro }}</p>
                 </div>
             {% endif %}
-            
+
             {% if evaluations_lider and evaluations_lider|length > 0 %}
                 <h3>Médias por Critério {% if periodo_filtro %}({{ periodo_filtro }}){% else %}(Todas Avaliações){% endif %}</h3>
                 <div class="chart-container">
                     <canvas id="radarChartLider"></canvas>
                 </div>
+
+                {% set datas = [] %}
+                {% set percentuais = [] %}
+                {% for row in evaluations_lider %}
+                  {% if row.area_atuacao == "Esteiras" and row.percentual_atendimento_esteira %}
+                    {% set _ = datas.append(row.data_avaliacao) %}
+                    {% set _ = percentuais.append(row.percentual_atendimento_esteira | float) %}
+                  {% endif %}
+                {% endfor %}
+                {% if percentuais and datas %}
+                <h3>Evolução do % Atendimento - Esteiras</h3>
+                <div class="chart-container">
+                    <canvas id="barChartEsteiras"></canvas>
+                </div>
+                {% endif %}
 
                 <h3>Histórico de Avaliações {% if periodo_filtro %}({{ periodo_filtro }}){% endif %}</h3>
                 <div class="table-responsive-container">
@@ -128,40 +144,57 @@
                                 label: "Média de {{ selected_lider_nome }}",
                                 data: radarDataLider.data,
                                 fill: true,
-                                backgroundColor: "rgba(238, 77, 45, 0.2)", // Shopee Orange with transparency
-                                borderColor: "#EE4D2D", // Shopee Orange
-                                pointBackgroundColor: "#EE4D2D", // Shopee Orange
+                                backgroundColor: "rgba(238, 77, 45, 0.2)",
+                                borderColor: "#EE4D2D",
+                                pointBackgroundColor: "#EE4D2D",
                                 pointBorderColor: "#fff",
                                 pointHoverBackgroundColor: "#fff",
-                                pointHoverBorderColor: "#D03F20" // Shopee Dark Orange
+                                pointHoverBorderColor: "#D03F20"
                             }]
                         },
                         options: {
                             elements: {
-                                line: {
-                                    borderWidth: 2 
-                                }
+                                line: { borderWidth: 2 }
                             },
                             scales: {
                                 r: {
                                     angleLines: { display: true },
                                     suggestedMin: 0,
                                     suggestedMax: 10,
-                                    ticks: { 
-                                        stepSize: 1,
-                                        backdropColor: "rgba(255, 255, 255, 0.75)" 
-                                    },
-                                    pointLabels: {
-                                        font: {
-                                            size: 10 
-                                        }
-                                    }
+                                    ticks: { stepSize: 1, backdropColor: "rgba(255, 255, 255, 0.75)" },
+                                    pointLabels: { font: { size: 10 } }
                                 }
                             },
                             responsive: true,
                             maintainAspectRatio: false
                         }
                     });
+
+                    {% if percentuais and datas %}
+                    const ctxBar = document.getElementById("barChartEsteiras");
+                    new Chart(ctxBar, {
+                        type: 'bar',
+                        data: {
+                            labels: {{ datas | tojson }},
+                            datasets: [{
+                                label: '% Atendimento - Esteiras',
+                                data: {{ percentuais | tojson }},
+                                backgroundColor: 'rgba(33, 150, 243, 0.6)',
+                                borderColor: 'rgba(33, 150, 243, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100
+                                }
+                            },
+                            responsive: true
+                        }
+                    });
+                    {% endif %}
                 </script>
 
             {% else %}
