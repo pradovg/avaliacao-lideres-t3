@@ -1,12 +1,23 @@
+# --- Bibliotecas padrão ---
 import os
 import sys
+import io
 import csv
+import json
 import datetime
-from collections import defaultdict
 import tempfile
 import pathlib
-import json
-from google.oauth2 import service_account
+from collections import defaultdict
+
+# --- Bibliotecas externas ---
+import gspread
+from flask import Flask, send_from_directory, render_template, request, redirect, url_for, flash, session, make_response
+from functools import wraps
+from google.oauth2 import service_account, Credentials
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.utils import ImageReader
+from reportlab.lib.units import cm
 
 # Configuração para evitar erro de diretório home no ambiente de produção
 os.environ['HOME'] = tempfile.gettempdir()
@@ -354,7 +365,61 @@ def delete_evaluation_record():
         flash('Erro ao excluir a avaliação. Tente novamente.', 'error')
         return redirect(url_for('delete_evaluation'))
 
+@app.route('/gerar_pdf', methods=['POST'])
+@login_required
+def gerar_pdf():
+    nome_lider = request.form.get("lider_nome", "Líder")
+    data_inicio = request.form.get("data_inicio", "")
+    data_fim = request.form.get("data_fim", "")
+    periodo = f"{data_inicio} a {data_fim}" if data_inicio or data_fim else "Período completo"
+    observacoes = "Observações adicionadas em avaliações."
 
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    logo_path = os.path.join(app.static_folder, "img", "shopee_logo.png")
+    if os.path.exists(logo_path):
+        logo = ImageReader(logo_path)
+        c.drawImage(logo, x=2*cm, y=height - 5*cm, width=6*cm, height=3.5*cm, mask='auto')
+
+    c.setFont("Helvetica-Bold", 20)
+    c.drawCentredString(width / 2, height - 6.5*cm, "Relatório de Desempenho Semanal")
+
+    c.setFont("Helvetica", 12)
+    c.drawString(2*cm, height - 8*cm, f"Líder Avaliado: {nome_lider}")
+    c.drawString(2*cm, height - 8.8*cm, f"Período: {periodo}")
+
+    c.setStrokeColorRGB(0.8, 0.8, 0.8)
+    c.rect(2*cm, height - 15*cm, width - 4*cm, 6*cm)
+    c.drawCentredString(width/2, height - 12*cm, "[Gráficos Aqui]")
+
+    c.setFont("Helvetica-Bold", 12)
+    c.drawString(2*cm, height - 16.5*cm, "Observações:")
+    c.setFont("Helvetica", 11)
+    text = c.beginText(2*cm, height - 17.5*cm)
+    text.setLeading(14)
+    text.textLine(observacoes)
+    c.drawText(text)
+
+    y_ass = 4*cm
+    c.line(2*cm, y_ass, 7*cm, y_ass)
+    c.drawString(2*cm, y_ass - 0.6*cm, "Supervisor")
+
+    c.line(8*cm, y_ass, 13*cm, y_ass)
+    c.drawString(8*cm, y_ass - 0.6*cm, "Testemunha")
+
+    c.line(14*cm, y_ass, width - 2*cm, y_ass)
+    c.drawString(14*cm, y_ass - 0.6*cm, nome_lider)
+
+    c.showPage()
+    c.save()
+    buffer.seek(0)
+
+    response = make_response(buffer.read())
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'inline; filename=relatorio_{nome_lider}.pdf'
+    return response
 
 
 @app.route('/manage_lideres', methods=['GET'])
