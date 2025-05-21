@@ -60,14 +60,14 @@
                     <p>Período analisado: {{ periodo_filtro }}</p>
 
                     <!-- Botão de exportar PDF estilizado -->
-                    <form method="POST" action="{{ url_for('gerar_pdf') }}" target="_blank" style="margin-top: 20px; margin-bottom: 20px;">
-                        <input type="hidden" name="lider_nome" value="{{ selected_lider_nome }}">
-                        <input type="hidden" name="data_inicio" value="{{ data_inicio }}">
-                        <input type="hidden" name="data_fim" value="{{ data_fim }}">
-                        <button type="submit" style="background-color: #EE4D2D; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
-                            📄 Exportar PDF
-                        </button>
-                    </form>
+                    <form method="POST" action="{{ url_for('gerar_pdf') }}" target="_blank" id="pdfForm">
+  <input type="hidden" name="lider_nome" value="{{ selected_lider_nome }}">
+  <input type="hidden" name="data_inicio" value="{{ data_inicio }}">
+  <input type="hidden" name="data_fim" value="{{ data_fim }}">
+  <input type="hidden" name="grafico_radar" id="graficoRadarInput">
+  <input type="hidden" name="grafico_linha" id="graficoLinhaInput">
+  <button type="submit" class="btn-pdf">📄 Exportar PDF</button>
+</form>
                 </div>
             {% endif %}
 
