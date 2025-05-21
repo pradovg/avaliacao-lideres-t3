@@ -209,6 +209,15 @@
                     });
                     {% endif %}
                 </script>
+        <script>
+  document.getElementById("pdfForm").addEventListener("submit", function (e) {
+    const radar = document.getElementById("radarChartLider");
+    const linha = document.getElementById("barChartEsteiras");
+
+    document.getElementById("graficoRadarInput").value = radar.toDataURL();
+    document.getElementById("graficoLinhaInput").value = linha.toDataURL();
+  });
+</script>
             {% else %}
                 <p class="no-data">Nenhuma avaliação encontrada para {{ selected_lider_nome }}{% if periodo_filtro %} no período selecionado{% endif %}.</p>
             {% endif %}
