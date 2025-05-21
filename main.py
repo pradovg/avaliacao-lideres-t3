@@ -13,7 +13,7 @@ from collections import defaultdict
 import gspread
 from flask import Flask, send_from_directory, render_template, request, redirect, url_for, flash, session, make_response
 from functools import wraps
-from google.oauth2 import service_account, Credentials
+from google.oauth2 import service_account  # ✅ Corrigido: sem Credentials
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
