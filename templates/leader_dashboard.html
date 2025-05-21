@@ -59,7 +59,15 @@
             {% if periodo_filtro %}
                 <div class="periodo-info">
                     <p>Período analisado: {{ periodo_filtro }}</p>
-                </div>
+                    <!-- Botão de exportar PDF -->
+<form method="POST" action="{{ url_for('gerar_pdf') }}" target="_blank" style="margin-top: 20px; margin-bottom: 20px;">
+    <input type="hidden" name="lider_nome" value="{{ selected_lider_nome }}">
+    <input type="hidden" name="data_inicio" value="{{ data_inicio }}">
+    <input type="hidden" name="data_fim" value="{{ data_fim }}">
+    <button type="submit" class="btn-pdf">📄 Exportar PDF</button>
+
+    </form>
+            </div>
             {% endif %}
 
             {% if evaluations_lider and evaluations_lider|length > 0 %}
