@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -23,7 +23,6 @@
         <h1>Dashboard de Desempenho do Líder</h1>
 
         <form method="GET" action="{{ url_for('leader_dashboard_select') }}" class="leader-select-form">
-            <!-- Formulário de seleção (mantido igual) -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="selected_lider">Selecione o Líder:</label>
@@ -59,19 +58,20 @@
             {% if periodo_filtro %}
                 <div class="periodo-info">
                     <p>Período analisado: {{ periodo_filtro }}</p>
-                    <!-- Botão de exportar PDF -->
-<form method="POST" action="{{ url_for('gerar_pdf') }}" target="_blank" style="margin-top: 20px; margin-bottom: 20px;">
-    <input type="hidden" name="lider_nome" value="{{ selected_lider_nome }}">
-    <input type="hidden" name="data_inicio" value="{{ data_inicio }}">
-    <input type="hidden" name="data_fim" value="{{ data_fim }}">
-    <button type="submit" class="btn-pdf">📄 Exportar PDF</button>
 
-    </form>
-            </div>
+                    <!-- Botão de exportar PDF estilizado -->
+                    <form method="POST" action="{{ url_for('gerar_pdf') }}" target="_blank" style="margin-top: 20px; margin-bottom: 20px;">
+                        <input type="hidden" name="lider_nome" value="{{ selected_lider_nome }}">
+                        <input type="hidden" name="data_inicio" value="{{ data_inicio }}">
+                        <input type="hidden" name="data_fim" value="{{ data_fim }}">
+                        <button type="submit" style="background-color: #EE4D2D; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                            📄 Exportar PDF
+                        </button>
+                    </form>
+                </div>
             {% endif %}
 
             {% if evaluations_lider and evaluations_lider|length > 0 %}
-                <!-- Preparação dos dados para o gráfico de linha -->
                 {% set datas = [] %}
                 {% set percentuais = [] %}
                 {% for row in evaluations_lider %}
@@ -83,14 +83,11 @@
 
                 <h3>Médias por Critério {% if periodo_filtro %}({{ periodo_filtro }}){% else %}(Todas Avaliações){% endif %}</h3>
                 
-                <!-- Container flexbox para os dois gráficos lado a lado -->
                 <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
-                  <!-- Gráfico de radar -->
                   <div class="chart-container" style="flex: 1; min-width: 300px;">
                     <canvas id="radarChartLider"></canvas>
                   </div>
                   
-                  <!-- Gráfico de linha (evolução) -->
                   {% if percentuais and datas %}
                   <div class="chart-container" style="flex: 1; min-width: 300px;">
                     <h3>Evolução do % Atendimento - Esteiras</h3>
@@ -101,7 +98,6 @@
 
                 <h3>Histórico de Avaliações {% if periodo_filtro %}({{ periodo_filtro }}){% endif %}</h3>
                 <div class="table-responsive-container">
-                    <!-- Tabela (mantida igual) -->
                     <table>
                         <thead>
                             <tr>
@@ -151,7 +147,6 @@
                 </div>
 
                 <script>
-                    // Script para o gráfico de radar
                     const ctxRadarLider = document.getElementById("radarChartLider");
                     const radarDataLider = {{ radar_chart_data_lider | tojson }};
                     new Chart(ctxRadarLider, {
@@ -171,9 +166,7 @@
                             }]
                         },
                         options: {
-                            elements: {
-                                line: { borderWidth: 2 }
-                            },
+                            elements: { line: { borderWidth: 2 } },
                             scales: {
                                 r: {
                                     angleLines: { display: true },
@@ -188,7 +181,6 @@
                         }
                     });
 
-                    // Script para o gráfico de linha (evolução)
                     {% if percentuais and datas %}
                     const ctxBar = document.getElementById("barChartEsteiras");
                     new Chart(ctxBar, {
@@ -217,12 +209,11 @@
                     });
                     {% endif %}
                 </script>
-
             {% else %}
                 <p class="no-data">Nenhuma avaliação encontrada para {{ selected_lider_nome }}{% if periodo_filtro %} no período selecionado{% endif %}.</p>
             {% endif %}
         {% else %}
-             <p class="no-data">Selecione um líder para visualizar o dashboard.</p>
+            <p class="no-data">Selecione um líder para visualizar o dashboard.</p>
         {% endif %}
     </div>
 </body>
