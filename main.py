@@ -29,9 +29,6 @@ def patched_home():
     return pathlib.Path(tempfile.gettempdir())
 pathlib.Path.home = patched_home
 
-import gspread
-from google.oauth2.service_account import Credentials
-
 # DON'T CHANGE THIS !!!
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
