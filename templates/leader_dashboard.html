@@ -55,21 +55,22 @@
         {% if selected_lider_nome %}
             <h2>Desempenho de: {{ selected_lider_nome }}</h2>
 
-            {% if periodo_filtro %}
-                <div class="periodo-info">
-                    <p>Período analisado: {{ periodo_filtro }}</p>
+           {% if periodo_filtro %}
+  <div class="periodo-info">
+    <p>Período analisado: {{ periodo_filtro }}</p>
 
-                    <!-- Botão de exportar PDF estilizado -->
-                    <form method="POST" action="{{ url_for('gerar_pdf') }}" target="_blank" id="pdfForm">
-  <input type="hidden" name="lider_nome" value="{{ selected_lider_nome }}">
-  <input type="hidden" name="data_inicio" value="{{ data_inicio }}">
-  <input type="hidden" name="data_fim" value="{{ data_fim }}">
-  <input type="hidden" name="grafico_radar" id="graficoRadarInput">
-  <input type="hidden" name="grafico_linha" id="graficoLinhaInput">
-  <button type="submit" class="btn-pdf">📄 Exportar PDF</button>
-</form>
-                </div>
-            {% endif %}
+    <!-- Botão de exportar PDF -->
+    <form method="POST" action="{{ url_for('gerar_pdf') }}" target="_blank" id="form-export-pdf" style="margin-top: 15px;">
+      <input type="hidden" name="lider_nome" value="{{ selected_lider_nome }}">
+      <input type="hidden" name="data_inicio" value="{{ data_inicio }}">
+      <input type="hidden" name="data_fim" value="{{ data_fim }}">
+      <!-- Esses inputs serão preenchidos via JS -->
+      <input type="hidden" name="grafico_radar" id="grafico_radar">
+      <input type="hidden" name="grafico_linha" id="grafico_linha">
+      <button type="submit" class="btn-pdf">📄 Exportar PDF</button>
+    </form>
+  </div>
+{% endif %}
 
             {% if evaluations_lider and evaluations_lider|length > 0 %}
                 {% set datas = [] %}
@@ -209,21 +210,31 @@
                     });
                     {% endif %}
                 </script>
-        <script>
-  document.getElementById("pdfForm").addEventListener("submit", function (e) {
-    const radar = document.getElementById("radarChartLider");
-    const linha = document.getElementById("barChartEsteiras");
-
-    document.getElementById("graficoRadarInput").value = radar.toDataURL();
-    document.getElementById("graficoLinhaInput").value = linha.toDataURL();
-  });
-</script>
-            {% else %}
+                   {% else %}
                 <p class="no-data">Nenhuma avaliação encontrada para {{ selected_lider_nome }}{% if periodo_filtro %} no período selecionado{% endif %}.</p>
             {% endif %}
         {% else %}
             <p class="no-data">Selecione um líder para visualizar o dashboard.</p>
         {% endif %}
     </div>
+    <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const formPDF = document.getElementById("form-export-pdf");
+    if (formPDF) {
+      formPDF.addEventListener('submit', function (e) {
+        const radarCanvas = document.getElementById("radarChartLider");
+        const barCanvas = document.getElementById("barChartEsteiras");
+
+        if (radarCanvas && barCanvas) {
+          const radarDataURL = radarCanvas.toDataURL("image/png");
+          const barDataURL = barCanvas.toDataURL("image/png");
+
+          document.getElementById("grafico_radar").value = radarDataURL;
+          document.getElementById("grafico_linha").value = barDataURL;
+        }
+      });
+    }
+  });
+</script>
 </body>
 </html>
