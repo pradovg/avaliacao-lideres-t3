@@ -365,10 +365,13 @@ def delete_evaluation_record():
 @app.route('/gerar_pdf', methods=['POST'])
 @login_required
 def gerar_pdf():
+    from reportlab.lib.utils import ImageReader  # ✅ Reimporta aqui, local
+
     nome_lider = request.form.get("lider_nome", "Líder")
     data_inicio = request.form.get("data_inicio", "")
     data_fim = request.form.get("data_fim", "")
     periodo = f"{data_inicio} a {data_fim}" if data_inicio or data_fim else "Período completo"
+    observacoes = "Observações adicionadas em avaliações."
 
     # Gráficos recebidos como base64
     grafico_radar_base64 = request.form.get("grafico_radar", "")
