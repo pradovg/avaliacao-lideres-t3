@@ -392,7 +392,24 @@ def gerar_pdf():
 
     c.setStrokeColorRGB(0.8, 0.8, 0.8)
     c.rect(2*cm, height - 15*cm, width - 4*cm, 6*cm)
-    c.drawCentredString(width/2, height - 12*cm, "[Gráficos Aqui]")
+    c.drawCentredString(width/2, height - 12*cm, from reportlab.lib.utils import ImageReader
+import base64
+
+# No início da função gerar_pdf, depois dos campos nome_lider etc:
+grafico_radar_base64 = request.form.get("grafico_radar", "")
+grafico_linha_base64 = request.form.get("grafico_linha", "")
+
+# Decode base64 images (se existirem)
+if grafico_radar_base64.startswith("data:image/png;base64,"):
+    grafico_radar_data = base64.b64decode(grafico_radar_base64.split(",")[1])
+    radar_img = ImageReader(io.BytesIO(grafico_radar_data))
+    c.drawImage(radar_img, 2*cm, height - 20*cm, width=8*cm, height=8*cm, preserveAspectRatio=True)
+
+if grafico_linha_base64.startswith("data:image/png;base64,"):
+    grafico_linha_data = base64.b64decode(grafico_linha_base64.split(",")[1])
+    linha_img = ImageReader(io.BytesIO(grafico_linha_data))
+    c.drawImage(linha_img, 11*cm, height - 20*cm, width=8*cm, height=8*cm, preserveAspectRatio=True)
+)
 
     c.setFont("Helvetica-Bold", 12)
     c.drawString(2*cm, height - 16.5*cm, "Observações:")
