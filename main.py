@@ -18,6 +18,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import cm
+from reportlab.lib.utils import ImageReader
 
 # Configuração para evitar erro de diretório home no ambiente de produção
 os.environ['HOME'] = tempfile.gettempdir()
