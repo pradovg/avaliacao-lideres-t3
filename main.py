@@ -372,8 +372,23 @@ def gerar_pdf():
     data_inicio = request.form.get("data_inicio", "")
     data_fim = request.form.get("data_fim", "")
     periodo = f"{data_inicio} a {data_fim}" if data_inicio or data_fim else "Período completo"
-    observacoes = "Observações adicionadas em avaliações."
 
+    # Gráficos recebidos como base64
+    grafico_radar_base64 = request.form.get("grafico_radar", "")
+    grafico_linha_base64 = request.form.get("grafico_linha", "")
+
+    # Observações reais
+    avaliacoes = get_evaluations_from_gsheet()
+    observacoes = [
+        row["observacoes_adicionais"]
+        for row in avaliacoes
+        if row.get("nome_lider") == nome_lider
+        and is_date_in_range(row.get("data_avaliacao"), data_inicio, data_fim)
+        and row.get("observacoes_adicionais")
+    ]
+    texto_obs = "\n".join(f"- {o}" for o in observacoes) if observacoes else "Sem observações registradas."
+
+    # Início do PDF
     buffer = io.BytesIO()
     c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
@@ -390,18 +405,31 @@ def gerar_pdf():
     c.drawString(2*cm, height - 8*cm, f"Líder Avaliado: {nome_lider}")
     c.drawString(2*cm, height - 8.8*cm, f"Período: {periodo}")
 
-    c.setStrokeColorRGB(0.8, 0.8, 0.8)
-    c.rect(2*cm, height - 15*cm, width - 4*cm, 6*cm)
-    c.drawCentredString(width/2, height - 12*cm, "[Gráficos Aqui]")
+    # Desenhar os gráficos recebidos como imagem
+    import base64
+    from reportlab.lib.utils import ImageReader
 
+    if grafico_radar_base64.startswith("data:image/png;base64,"):
+        radar_data = base64.b64decode(grafico_radar_base64.split(",")[1])
+        radar_img = ImageReader(io.BytesIO(radar_data))
+        c.drawImage(radar_img, x=2*cm, y=height - 17*cm, width=8*cm, height=8*cm, preserveAspectRatio=True)
+
+    if grafico_linha_base64.startswith("data:image/png;base64,"):
+        linha_data = base64.b64decode(grafico_linha_base64.split(",")[1])
+        linha_img = ImageReader(io.BytesIO(linha_data))
+        c.drawImage(linha_img, x=11*cm, y=height - 17*cm, width=8*cm, height=8*cm, preserveAspectRatio=True)
+
+    # Observações
     c.setFont("Helvetica-Bold", 12)
-    c.drawString(2*cm, height - 16.5*cm, "Observações:")
+    c.drawString(2*cm, height - 18.5*cm, "Observações:")
     c.setFont("Helvetica", 11)
-    text = c.beginText(2*cm, height - 17.5*cm)
+    text = c.beginText(2*cm, height - 19.3*cm)
     text.setLeading(14)
-    text.textLine(observacoes)
+    for linha in texto_obs.splitlines():
+        text.textLine(linha)
     c.drawText(text)
 
+    # Assinaturas
     y_ass = 4*cm
     c.line(2*cm, y_ass, 7*cm, y_ass)
     c.drawString(2*cm, y_ass - 0.6*cm, "Supervisor")
