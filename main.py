@@ -18,7 +18,6 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import cm
-from reportlab.lib.utils import ImageReader
 
 # Configuração para evitar erro de diretório home no ambiente de produção
 os.environ['HOME'] = tempfile.gettempdir()
@@ -396,6 +395,7 @@ def gerar_pdf():
 
     logo_path = os.path.join(app.static_folder, "img", "shopee_logo.png")
     if os.path.exists(logo_path):
+        print(f"Logo path: {logo_path} | Exists? {os.path.exists(logo_path)}")
         logo = ImageReader(logo_path)
         c.drawImage(logo, x=2*cm, y=height - 5*cm, width=6*cm, height=3.5*cm, mask='auto')
 
